@@ -129,10 +129,11 @@ angular.module('myApp.TodoList', ['ngRoute', 'myApp.todolistService'])
           modalErro.showModal()
         })
     }
-  });
-  $scope.getTasks();
-  $scope.limpaCampos = function(){
+    $scope.getTasks();
+    $scope.limpaCampos = function(){
     $scope.task_name = ''
     $scope.email = ''
     $scope.nome_resp = ''
   }
+  });
+  
