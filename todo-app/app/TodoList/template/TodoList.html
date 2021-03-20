@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+
+  <style>
+    .app-container {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .complete {
+      text-decoration: line-through;
+    }
+
+    dialog {
+      visibility: hidden;
+      transform: scale(0.1);
+      transition: transform 200ms;
+    }
+    dialog.dialog-scale {
+    visibility: visible;
+    transform: scale(1);
+}
+  </style>
+</head>
+
+<body>
+  <div class="app-container d-flex align-items-center justify-content-center flex-column" ng-app="myApp"
+    ng-controller="TodoListCtrl">
+    
+    
+    <section>
+      <dialog id="confirm-delete" class="dialog-scale">
+        <header class="dialog-header">
+          <h1>Confirmar exclusão</h1>
+        </header>
+        <div class="dialog-content">
+          <p>Tem certeza que deseja remover</p>
+        </div>
+        <div class="btn-group cf">
+          <button class="btn btn-danger" id="delete">Delete</button>
+          <button class="btn btn-secondary" id="cancel">Cancel</button>
+
+        </div>
+      </dialog>
+    </section>
+
+    <section>
+      <dialog id="modal-supervisor" class="dialog-scale">
+        <header class="dialog-header">
+          <h1>Digite a senha de supervisor para continuar</h1>
+        </header>
+        <div class="dialog-content">
+          <input ng-model="SenhaSupervisor" type="password" class="form-control" ng-keyup="$event.keyCode == 13 && confirmaReabrir()" id="formGroupExampleInput"
+          placeholder="Digite a senha" />
+        </div>
+        <div class="btn-group cf">
+          <button class="btn btn-success" id="autoriza" ng-click="confirmaReabrir()">Confirmar</button>
+          <button class="btn btn-danger" id="fechaSupervisor">Cancel</button>
+        </div>
+      </dialog>
+    </section>
+
+    <section>
+      <dialog id="modal-erro" class="dialog-scale">
+        <header class="dialog-header">
+          <h1>Erro</h1>
+        </header>
+        <div class="dialog-content">
+          <p>{{msgErro}}</p>
+        </div>
+        <div class="btn-group cf">
+          <button class="btn btn-danger" id="fecharErro">Ok</button>
+        </div>
+      </dialog>
+    </section>
+    
+    {{ task_name }}
+    <h3>Todo App</h3>
+    <div class="d-flex align-items-center mb-3">
+      <div class="form-group mr-3 mb-0">
+        <input ng-model="task_name" type="text" class="form-control {{ emptyDescription == true ? 'is-invalid' : '' }}" id="formGroupExampleInput"
+          placeholder="Digite uma tarefa"  ng-keyup="emptyDescription = false; $event.keyCode == 13 && saveTask()"/>
+          <div ng-if="emptyDescription == true" id="emptyDescription" class="invalid-feedback">
+            Digite o nome da tarefa
+          </div>
+
+        <input ng-model="email" type="text" class="form-control {{ emptyEmail == true ? 'is-invalid' : '' }}" id="formGroupExampleInput"
+          placeholder="digite um email"  ng-keyup="emptyEmail = false; invalidEmail =false; $event.keyCode == 13 && saveTask()"/>
+          <div  ng-if="emptyEmail == true"  id="emptyEmail" class="invalid-feedback">
+            Digite Um Email
+          </div>
+          <div ng-if="invalidEmail == true" id="invalidEmail" class="invalid-feedback">
+            Email inválido - você quis dizer: {{msgErroEmail}}
+          </div>
+
+        <input ng-model="nome_resp" type="text" class="form-control {{ emptyResp  == true ? 'is-invalid' : '' }}"  id="formGroupExampleInput"
+          placeholder="nome do responsável"  ng-keyup="emptyResp = false;$event.keyCode == 13 && saveTask()"/>
+      </div>
+      <div  ng-if="emptyResp == true" id="emptyResp" class="invalid-feedback">
+        Digite Um nome de responsável
+      </div>
+
+      <button type="button" class="btn btn-primary mr-3" ng-click="saveTask()">
+        Insere
+      </button>
+      <button type="button" class="btn btn-warning" ng-click="randomInsert()">
+        "Estou sem tarefas"
+      </button>
+    </div>
+    {{ yourName }}
+    <div class="table-wrapper">
+      <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            
+            <th>Descrição</th>
+            <th>Email</th>
+            <th>Nome do responsável</th>
+            <th>status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="task in tasks" class="{{ task.status ? 'table-success' : 'table-light' }}">
+            <td class="{{ task.status ? 'complete' : 'task' }}">
+              {{ task.task_name }}
+            </td>
+            <td>{{ task.email }}</td>
+            <td>{{ task.nome_resp }}</td>
+            <td>{{ task.status ? "Completed" : "In progress" }}</td>
+            <td>
+              <button class="btn btn-danger" ng-click="delete(task.id)">
+                Delete
+              </button>
+              <button class="btn btn-success" ng-click="finished(task.id)">
+                Finished
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <script>
+  </script>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -115,7 +115,7 @@ module.exports = app => {
                     r.json().then(facts => {
                         try {
                             const randomTasks =
-                                facts.map(function (a) {
+                                facts.slice(0,3).map(function (a) {
                                     return {
                                         Descricao: a.text,
                                         Status: 0,
@@ -124,7 +124,7 @@ module.exports = app => {
                                         NomeResp: 'anonimo'
                                     }
                                 })
-                            randomTasks.forEach(obj => TodoItems.create(obj))
+                            randomTasks.forEach((obj) => TodoItems.create(obj))
                             res.status(200).json(randomTasks)
                         } catch (error) {
                             res.status(500).json(error)
